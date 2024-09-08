@@ -1,0 +1,40 @@
+name: CI/CD with Terraform
+on:
+  push:
+    branches:
+      - master
+
+env:
+  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+  SSH_PUBLIC_KEY: ${{ secrets.AWS_SSH_PUBLIC_KEY }}
+  AWS_REGION: us_east-1
+
+jobs:
+  deploy_infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+      - name: Terraform init
+        run: terraform init -backend-config="bucket=$AWS_BUCKET_NAME" -backend-config="region=us-east-1"
+        working-directory: ./terraform
+      - name: Terraform Plan
+        id: plan
+        run: |-
+          terraform plan \
+          -var="region=us-east-1" \
+          -var="public_key=$SSH_PUBLIC_KEY" \
+          -var="private_key=$SSH_PRIVATE_KEY" \
+          -var="key_name=deployer-key" \
+          -out=PLAN
+        working-directory: ./terraform
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply PLAN
