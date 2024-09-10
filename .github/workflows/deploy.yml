@@ -10,7 +10,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
   SSH_PUBLIC_KEY: ${{ secrets.AWS_SSH_PUBLIC_KEY }}
-  AWS_REGION: us_east-1
+  AWS_REGION: eu-north-1a
 
 jobs:
   deploy_infra:
@@ -61,7 +61,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
           IMAGE_TAG: ${{ github.sha}}
-          AWS_DEFAULT_REGION: us_east-1
+          AWS_DEFAULT_REGION: eu-north-1a
         run: |-
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG
           DOCKER PUSH $REGISTRY/$REPOSITORY:$IMAGET_TAG
@@ -71,7 +71,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
           IMAGE_TAG: ${{ github.sha}}
-          AWS_DEFAULT_REGION: us_east-1
+          AWS_DEFAULT_REGION: eu-north-1a
         with:
           host:  ${{ needs.deploy_infra.outputs.SERVER_PUBLIC_IP }}
           username: ubuntu
