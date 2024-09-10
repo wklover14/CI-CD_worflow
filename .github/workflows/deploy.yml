@@ -67,7 +67,7 @@ jobs:
         run: |-
           ls
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./
-          DOCKER PUSH $REGISTRY/$REPOSITORY:$IMAGET_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGET_TAG
         working-directory: ./
       - name: Deploy docker image to EC2
         uses: appleboy/ssh-action@master
