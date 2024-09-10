@@ -20,34 +20,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: setup Terraform
+
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_wrapper: false
+
       - name: Terraform init
-        run: terraform init -backend-config="bucket=$AWS_BUCKET_NAME" -backend-config="region=eu-north-1"
+        run: terraform init -backend-config="bucket=${{ env.AWS_BUCKET_NAME }}" -backend-config="region=${{ env.AWS_REGION }}"
         working-directory: ./terraform
+
       - name: Terraform Plan
         id: plan
-        run: |-
+        run: |
           terraform plan \
-          -var="region=eu-north-1" \
-          -var="public_key=$SSH_PUBLIC_KEY" \
-          -var="private_key=$SSH_PRIVATE_KEY" \
+          -var="region=${{ env.AWS_REGION }}" \
+          -var="public_key=${{ env.SSH_PUBLIC_KEY }}" \
+          -var="private_key=${{ env.SSH_PRIVATE_KEY }}" \
           -var="key_name=deployer-key" \
           -out=PLAN
         working-directory: ./terraform
+
       - name: Terraform Apply
         id: apply
         run: terraform apply PLAN
         working-directory: ./terraform
+
       - name: Print Terraform Outputs
         run: terraform output
         working-directory: ./terraform
+
       - name: Set output
         id: set_ip
-        run: |-
-          echo "instance_public_ip=$(terraform output instance_public_ip)" >> $GITHUB_OUTPUT
+        run: echo "instance_public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
 
   deploy-app:
@@ -56,22 +61,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
-      - name: Build, push docker image
+
+      - name: Build and push Docker image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
           IMAGE_TAG: ${{ github.sha }}
-        run: |-
+        run: |
           aws ecr create-repository --repository-name $REPOSITORY || true
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./
-      - name: Deploy docker image to EC2
+
+      - name: Deploy Docker image to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ needs.deploy_infra.outputs.SERVER_PUBLIC_IP }}
@@ -81,11 +89,11 @@ jobs:
           script: |
             sudo apt update
             sudo apt install -y docker.io awscli
-            $(aws ecr get-login --no-include-email --region eu-north-1)
+            $(aws ecr get-login --no-include-email --region ${{ env.AWS_REGION }})
             docker stop myappcontainer || true
             docker rm myappcontainer || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
-            docker run -d --name myappcontainer -p 80:3000 ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
+            docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+            docker run -d --name myappcontainer -p 80:3000 ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
