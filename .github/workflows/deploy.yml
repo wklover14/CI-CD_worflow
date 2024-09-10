@@ -65,6 +65,8 @@ jobs:
           IMAGE_TAG: ${{ github.sha}}
           AWS_DEFAULT_REGION: eu-north-1
         run: |-
+          pwd
+          ls
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG Dockerfile
           DOCKER PUSH $REGISTRY/$REPOSITORY:$IMAGET_TAG
         working-directory: ./
