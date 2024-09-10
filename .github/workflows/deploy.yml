@@ -15,8 +15,6 @@ env:
 jobs:
   deploy_infra:
     runs-on: ubuntu-latest
-    outputs:
-      SERVER_PUBLIC_IP: ${{ steps.set_ip.outputs.INSTANCE_PUBLIC_IP }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -44,7 +42,7 @@ jobs:
       - name: Set output
         id: set_ip
         run: |-
-          echo "INSTANCE_PUBLIC_IP=$(terraform output instance_public_ip)" >> $GITHUB_OUTPUT
+          echo "SERVER_PUBLIC_IP=$(terraform output instance_public_ip)" >> $GITHUB_OUTPUT
 
   deploy-app:
     runs-on: ubuntu-latest
