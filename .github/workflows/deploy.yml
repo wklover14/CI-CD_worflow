@@ -81,7 +81,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha}}
           AWS_DEFAULT_REGION: eu-north-1
         with:
-          host:  ${{ needs.deploy_infra.outputs.SERVER_PUBLIC_IP  }}
+          host:  ${{ env.SEERVER_PUBLIC_IP  }}
           username: ubuntu
           key: ${{ env.SSH_PRIVATE_KEY }}
           envs: SSH_PRIVATE_KEY, REPOSITORY, REGISTRY, IMAGE_TAG, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
