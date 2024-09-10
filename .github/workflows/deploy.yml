@@ -62,12 +62,10 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
-          IMAGE_TAG: ${{ github.sha}}
-          AWS_DEFAULT_REGION: eu-north-1
+          IMAGE_TAG: ${{ github.sha }}
         run: |-
-          ls
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./
-          docker push $REGISTRY/$REPOSITORY:$IMAGET_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./
       - name: Deploy docker image to EC2
         uses: appleboy/ssh-action@master
