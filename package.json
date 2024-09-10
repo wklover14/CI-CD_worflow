@@ -1,5 +1,5 @@
 {
-  "name": "simple-nodejs-app",
+  "name": "Card_swipper",
   "version": "1.0.0",
   "description": "Research about a person",
   "main": "index.js",
@@ -9,21 +9,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rat9615/simple-nodejs-app.git"
+    "url": "git+https://github.com/rat9615/Card_swipper.git"
   },
   "author": "Rohan R",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rat9615/simple-nodejs-app/issues"
+    "url": "https://github.com/rat9615/Card_swipper/issues"
   },
-  "homepage": "https://github.com/rat9615/simple-nodejs-app#readme",
+  "homepage": "https://github.com/rat9615/Card_swipper#readme",
   "dependencies": {
+    "Card_swipper": "file:",
     "ejs": "^3.1.10",
     "express": "^4.17.3",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.20",
     "request": "^2.88.2",
-    "simple-nodejs-app": "file:",
     "wiki-infobox-parser": "^0.1.11"
   }
 }

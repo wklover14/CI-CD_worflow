@@ -1,17 +1,28 @@
-# simple-nodejs-app
+# CI/CD Workflow
 
-Simple-nodejs-app is a simple web application created using [Node.js](https://github.com/nodejs/node). It uses [MediaWiki - Wikipedia's Search API](https://www.mediawiki.org/wiki/API:Opensearch) to search for anything entered by the user and parses the result in a JSON format. The infobox of the Wikipedia page is parsed using [wiki-infobox-parser](https://github.com/0x333333/wiki-infobox-parser).
+This is a simple website used as example for creating a simple CI/CD workflow.
 
-## Download and Installation
+The workflow used github-action and terraform for creating and manging EC-2 instance on AWS. Then appleboy/ssh-action is used to connect to that instance and deploy a docker container containing the application.
 
-- Clone the repo ```https://github.com/rat9615/simple-nodejs-app```
-- [Fork, Clone or Download on Github](https://github.com/rat9615/simple-nodejs-app)
-
-## Usage
-
-- After installation, run ```npm install``` to download and install all the required dependencies.
-- Run ```npm start``` to run the web application.
-
-## Live Preview
-
-To view a live preview of this application, click [here](https://desolate-coast-53201.herokuapp.com/)
+## Requirements
+To make the project work, you need to provide :
+- Github Secrets : AWS_ACCESS_KEY_ID, AWS_BUCKET_NAME, AWS_SECRET_ACCESS_KEY, AWS_SSH_PRIVATE_KEY, AWS_SSH_PUBLIC_KEY
+- A S3 bucket
+- An ECR-LOGIN-AUTO profile with this policy:
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
