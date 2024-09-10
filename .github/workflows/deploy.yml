@@ -87,5 +87,5 @@ jobs:
             sudo $(aws ecr get-login --no-include-email --region us-east-1);
             sudo docker stop myappcontainer || true
             sudo docker rm myappcontainer || true
-            sudo docker pull $REGISTRY/$REPOSITORY:$IMAGET_TAG
+            sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
             sudo docker run -d --name myappcontainer -p 80:3000 $REGISTRY/$REPOSITORY:$IMAGET_TAG
