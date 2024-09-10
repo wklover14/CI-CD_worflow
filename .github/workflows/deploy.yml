@@ -86,25 +86,25 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}  # Use secrets directly for private key
           port: 22
-        script: |
-          # Install Docker
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
+          script: |
+            # Install Docker
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
 
-          # Install AWS CLI
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+            # Install AWS CLI
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
 
-          # Login to AWS ECR
-          $(aws ecr get-login --no-include-email --region ${{ env.AWS_REGION }})
+            # Login to AWS ECR
+            $(aws ecr get-login --no-include-email --region ${{ env.AWS_REGION }})
 
-          # Deploy Docker container
-          docker stop myappcontainer || true
-          docker rm myappcontainer || true
-          docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
-          docker run -d --name myappcontainer -p 80:3000 ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
-      env:
+            # Deploy Docker container
+            docker stop myappcontainer || true
+            docker rm myappcontainer || true
+            docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+            docker run -d --name myappcontainer -p 80:3000 ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+        env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
           IMAGE_TAG: ${{ github.sha }}
