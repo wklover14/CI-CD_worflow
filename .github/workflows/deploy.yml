@@ -89,11 +89,11 @@ jobs:
           script: |
             sudo apt update
             sudo apt install -y docker.io awscli
-            $(aws ecr get-login --no-include-email --region ${{ env.AWS_REGION }})
-            docker stop myappcontainer || true
-            docker rm myappcontainer || true
-            docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
-            docker run -d --name myappcontainer -p 80:3000 ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+            sudo $(aws ecr get-login --no-include-email --region ${{ env.AWS_REGION }})
+            sudo docker stop myappcontainer || true
+            sudo docker rm myappcontainer || true
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+            sudo docker run -d --name myappcontainer -p 80:3000 ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
