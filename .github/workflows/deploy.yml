@@ -84,6 +84,7 @@ jobs:
           username: ubuntu
           key: ${{ env.SSH_PRIVATE_KEY }}
           envs: SSH_PRIVATE_KEY, REPOSITORY, REGISTRY, IMAGE_TAG, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
+          debug: true
           script: |-
             sudo apt update
             sudo apt install docker.io -y
