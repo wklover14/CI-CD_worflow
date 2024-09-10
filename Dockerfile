@@ -1,6 +1,9 @@
-FROM node
-WORKDIR /app
+FROM node:14
+WORKDIR /usr/app
+
+COPY package.json .
+RUN npm install
 
 COPY . .
 EXPOSE 3000
-ENTRYPOINT start npm
+ENTRYPOINT npm start
