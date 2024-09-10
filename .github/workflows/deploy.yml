@@ -67,7 +67,7 @@ jobs:
         run: |-
           pwd
           ls
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG Dockerfile
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./
           DOCKER PUSH $REGISTRY/$REPOSITORY:$IMAGET_TAG
         working-directory: ./
       - name: Deploy docker image to EC2
