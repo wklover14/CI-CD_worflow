@@ -79,7 +79,7 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./
 
-      - name: Deploy Docker image to EC2
+      - name: Deploy docker image to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ needs.deploy_infra.outputs.SERVER_PUBLIC_IP }}
@@ -87,8 +87,8 @@ jobs:
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}  # Use secrets directly for private key
           port: 22
           script: |
+            # Install necessary packages
             sudo apt-get update
-
             sudo apt-get install -y unzip
 
             # Install Docker
@@ -100,14 +100,15 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
 
-            # Login to AWS ECR
-            $(aws ecr get-login --no-include-email --region ${{ env.AWS_REGION }})
+            # Authenticate with AWS ECR
+            aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
 
-            # Deploy Docker container
-            sudo docker stop myappcontainer || true
-            sudo docker rm myappcontainer || true
-            sudo docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
-            sudo docker run -d --name myappcontainer -p 80:3000 ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+            # Pull and run the Docker container
+            docker stop myappcontainer || true
+            docker rm myappcontainer || true
+            docker pull ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
+            docker run -d --name myappcontainer -p 80:3000 ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
@@ -115,3 +116,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-north-1
+      
