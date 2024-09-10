@@ -105,10 +105,10 @@ jobs:
 
 
             # Pull and run the Docker container
-            docker stop myappcontainer || true
-            docker rm myappcontainer || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
-            docker run -d --name myappcontainer -p 80:3000 ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
+            sudo docker stop myappcontainer || true
+            sudo docker rm myappcontainer || true
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
+            sudo docker run -d --name myappcontainer -p 80:3000 ${{ steps.login-ecr.outputs.registry }}/simple-nodejs-app:${{ github.sha }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simple-nodejs-app
