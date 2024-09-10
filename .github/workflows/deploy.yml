@@ -64,6 +64,7 @@ jobs:
           REPOSITORY: simple-nodejs-app
           IMAGE_TAG: ${{ github.sha }}
         run: |-
+          aws ecr create-repository --repository-name $REPOSITORY
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./
