@@ -43,6 +43,7 @@ jobs:
         id: set_ip
         run: |-
           echo "SERVER_PUBLIC_IP=$(terraform output instance_public_ip)" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
 
   deploy-app:
     runs-on: ubuntu-latest
